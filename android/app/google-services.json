@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "181779977120",
+    "project_id": "crawler-qit35v",
+    "storage_bucket": "crawler-qit35v.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:181779977120:android:c4fcf76c00952191538ac5",
+        "android_client_info": {
+          "package_name": "com.mycompany.crawler"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR920scAxPT1t93AZ4jt12vsHYrtw4JRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

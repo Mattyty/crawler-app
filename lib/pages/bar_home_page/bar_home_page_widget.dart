@@ -107,7 +107,6 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
     }
 
     return FutureBuilder<List<BarsRow>>(
-      // FIX 1: Provide a fallback to 'Manchester' so the database query doesn't choke on an empty string
       future: BarsTable().queryRows(
         queryFn: (q) => q.eqOrNull(
           'city',
@@ -219,6 +218,8 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                                     onTap: () async {
                                       logFirebaseEvent('BAR_HOME_PAGE_PAGE_Text_ugvx41j7_ON_TAP');
                                       logFirebaseEvent('Text_navigate_to');
+                                      // Close drawer before updating routing page context
+                                      Navigator.pop(context);
                                       context.pushNamed(BarHomePageWidget.routeName);
                                     },
                                     child: Text(
@@ -266,7 +267,12 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                                       ),
                                     );
                                   },
-                                ).then((value) => safeSetState(() {}));
+                                ).then((value) => safeSetState(() {
+                                  // FIX: Closes the drawer immediately after city selection sheet yields control back
+                                  if (scaffoldKey.currentState!.isDrawerOpen) {
+                                    Navigator.pop(context);
+                                  }
+                                }));
                               },
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -322,7 +328,12 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                                               ),
                                             );
                                           },
-                                        ).then((value) => safeSetState(() {}));
+                                        ).then((value) => safeSetState(() {
+                                          // FIX: Duplicated click close guard for the inline raw text trigger
+                                          if (scaffoldKey.currentState!.isDrawerOpen) {
+                                            Navigator.pop(context);
+                                          }
+                                        }));
                                       },
                                       child: Text(
                                         valueOrDefault<String>(
@@ -405,7 +416,12 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                                       ),
                                     );
                                   },
-                                ).then((value) => safeSetState(() {}));
+                                ).then((value) => safeSetState(() {
+                                  // FIX: Closes the side drawer panel immediately following user persona updates
+                                  if (scaffoldKey.currentState!.isDrawerOpen) {
+                                    Navigator.pop(context);
+                                  }
+                                }));
                               },
                               child: Text(
                                 valueOrDefault<String>(
@@ -451,7 +467,7 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                               onTap: () async {
                                 logFirebaseEvent('BAR_HOME_PAGE_PAGE_Text_iaowa592_ON_TAP');
                                 logFirebaseEvent('Text_navigate_to');
-
+                                Navigator.pop(context); // Close drawer safely
                                 context.pushNamed(
                                   LoginPageWidget.routeName,
                                   extra: <String, dynamic>{
@@ -503,6 +519,7 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                               onTap: () async {
                                 logFirebaseEvent('BAR_HOME_PAGE_PAGE_Text_viugnlvn_ON_TAP');
                                 logFirebaseEvent('Text_navigate_to');
+                                Navigator.pop(context); // Cleanly drops drawer frame
                                 context.pushNamed(BarHomePageWidget.routeName);
                               },
                               child: Text(
@@ -622,7 +639,6 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                                       focusNode: _model.textFieldFocusNode,
                                       onChanged: (_) => EasyDebounce.debounce(
                                         '_model.textController',
-                                        // FIX 2: Dropped debounce from 2000ms down to a snappy 350ms
                                         const Duration(milliseconds: 350),
                                         () async {
                                           logFirebaseEvent('BAR_HOME_TextField_gk28zxtz_ON_TEXTFIELD');
@@ -1576,10 +1592,10 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
-                                                Opacity(
+                                                const Opacity(
                                                   opacity: 0.4,
                                                   child: Padding(
-                                                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                                                     child: const FaIcon(
                                                       FontAwesomeIcons.clock,
                                                       size: 24.0,
@@ -1635,7 +1651,6 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                                           child: FutureBuilder<List<OffersRow>>(
                                             future: OffersTable().queryRows(
                                               queryFn: (q) => q
-                                                  // FIX 3: Fixed format string to use EEEE day names so Supabase doesn't get a broken timestamp string
                                                   .eqOrNull(
                                                     'day_of_week',
                                                     dateTimeFormat("EEEE", getCurrentTimestamp),
@@ -1670,7 +1685,8 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                                                 itemBuilder: (context, listComigUpIndex) {
                                                   final listComigUpOffersRow = listComigUpOffersRowList[listComigUpIndex];
                                                   return Column(
-                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
                                                     children: [
                                                       FutureBuilder<List<BarsRow>>(
                                                         future: BarsTable().querySingleRow(
@@ -1782,10 +1798,10 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                                                                                               letterSpacing: 0.0,
                                                                                             ),
                                                                                         overflow: TextOverflow.ellipsis,
-                                                                                      ),
                                                                                     ),
-                                                                                  ],
-                                                                                ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
                                                                                 Row(
                                                                                   mainAxisSize: MainAxisSize.max,
                                                                                   children: [
@@ -1893,7 +1909,7 @@ class _BarHomePageWidgetState extends State<BarHomePageWidget>
                                                   opacity: 0.4,
                                                   child: Padding(
                                                     padding: EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
-                                                    child: FaIcon(
+                                                    child: const FaIcon(
                                                       FontAwesomeIcons.clock,
                                                       size: 24.0,
                                                     ),
